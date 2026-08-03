@@ -1,0 +1,19 @@
+{% if flash != None and flash.success %}
+  <div class="mb-6 px-4 py-3 bg-[#f0faf5] border border-[#b8ddc9] text-success rounded-md text-sm">
+    {{ flash.success }}
+  </div>
+{% endif %}
+
+{% if flash != None and flash.error %}
+  <div class="mb-6 px-4 py-3 bg-[#fdf1f1] border border-[#f0c8c8] text-danger rounded-md text-sm">
+    {{ flash.error }}
+  </div>
+{% endif %}
+
+{% if errors != None and errors.length %}
+  <ul class="mb-6 px-4 py-3 bg-[#fdf1f1] border border-[#f0c8c8] text-danger rounded-md text-sm list-disc list-inside">
+    {% for err in errors %}
+    <li>{{ err.msg }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}

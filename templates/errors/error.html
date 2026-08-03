@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} · MyBlog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href={{url_for('static', path='css/main.css')}}>
+  <link rel="stylesheet" href={{url_for('static', path='css/error.css')}}>
+</head>
+<body>
+
+  <!-- Decorative background -->
+  <div class="bg-dots" aria-hidden="true">
+    <div class="bg-dot" style="width:320px;height:320px;top:-80px;right:-80px;opacity:0.5"></div>
+    <div class="bg-dot" style="width:180px;height:180px;bottom:80px;left:-50px;opacity:0.4"></div>
+    <div class="bg-dot" style="width:80px;height:80px;bottom:200px;right:120px;opacity:0.3"></div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <a href={{url_for('home')}} class="brand">
+      <div class="brand-mark">M</div>
+      <span class="brand-name">MyBlog</span>
+    </a>
+    <a href={{url_for('home')}} class="topbar-link">← Back to home</a>
+  </header>
+
+  <!-- Main error content -->
+  <main>
+    <!-- Accent line -->
+    <div class="divider-line"></div>
+
+    <!-- Title & description -->
+    <h1 class="error-title">{{info.title}} </h1>
+    <p class="error-sub">{{info.sub}}</p>
+
+    {% if message != info.sub %}
+      <p class="error-custom-msg">{{message}}</p>
+    {% endif %}
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <a href={{url_for('home')}} class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M2 8L8 2l6 6M8 2v12"/>
+        </svg>
+        Go home
+      </a>
+
+      {% if status_code == 404 %}
+        <a href="/posts" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M3 4h10M3 8h7M3 12h5"/>
+          </svg>
+          Browse posts
+        </a>
+      {% elif status_code == 401 or status_code == 403 %}
+        <a href="/auth/login" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+            <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+          </svg>
+          Sign in
+        </a>
+      {% elif status_code == 429 %}
+        <button onclick="window.history.back()" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 8h8M7 5l-3 3 3 3"/>
+          </svg>
+          Go back
+        </button>
+      {% else %}
+        <button onclick="window.history.back()" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M4 8h8M7 5l-3 3 3 3"/>
+          </svg>
+          Go back
+        </button>
+      {% endif %}
+    </div>
+
+    <!-- Quick links (404 + 500 only) -->
+    {% if status_code == 404 or status_code == 500 %}
+    <nav class="quick-links" aria-label="Helpful links">
+      <p>You might be looking for</p>
+      <ul>
+        <li>
+          <a href="/posts">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h7M3 12h5"/></svg>
+            All posts
+          </a>
+        </li>
+        <li>
+          <a href="/posts/search">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+            Search
+          </a>
+        </li>
+        {% if user %}
+        <li>
+          <a href="/posts/create">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10"/></svg>
+            Write a post
+          </a>
+        </li>
+        {% else %}
+        <li>
+          <a href="/auth/login">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5.5" r="3"/><path d="M2 13.5c0-3 2.5-5 6-5s6 2 6 5"/></svg>
+            Sign in
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>MyBlog &copy; 2026</span>
+    <span>
+      <a href="/">Home</a> &middot;
+      <a href="/posts">Posts</a> &middot;
+      <a href="mailto:support@myblog.com">Contact</a>
+    </span>
+  </footer>
+
+</body>
+</html>

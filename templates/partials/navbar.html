@@ -1,0 +1,32 @@
+<header class="sticky top-0 z-50 bg-paper/95 backdrop-blur border-b border-paper-3">
+  <div class="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+    <a href={{url_for('home')}} class="flex items-center gap-2.5 no-underline">
+      <div class="w-7.5 h-7.5 rounded-[7px] bg-accent flex items-center justify-center font-serif font-semibold text-sm text-white">M</div>
+      <span class="font-serif text-base font-semibold text-ink">MyBlog</span>
+    </a>
+
+    <nav class="flex items-center gap-5">
+      <a href={{url_for('posts')}} class="text-sm text-ink-muted hover:text-ink transition-colors duration-150">Posts</a>
+
+      {% if user %}
+        <a href="/posts/create" class="inline-flex items-center gap-1.5 text-sm font-medium text-paper bg-ink px-4 py-2 rounded-md hover:bg-[#2e2a24] transition-colors duration-150">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>
+          New post
+        </a>
+
+        <div class="flex items-center gap-3 pl-4 ml-1 border-l border-paper-3">
+          <a href={{url_for('user_posts', user_id=user.id)}} class="flex items-center gap-2 no-underline">
+            <img src={{user.img_path}} alt={{user.username}} class="w-7 h-7 rounded-full object-cover border border-paper-3">
+            <span class="text-sm text-ink-muted hidden sm:inline">{{user.username}}</span>
+          </a>
+          <form method="POST" action="/auth/logout" class="inline">
+            <button class="text-sm text-ink-faint hover:text-danger transition-colors duration-150">Sign out</button>
+          </form>
+        </div>
+      {% else %}
+        <a href="/auth/login" class="text-sm text-ink-muted hover:text-ink transition-colors duration-150">Sign in</a>
+        <a href="/auth/register" class="text-sm font-medium text-paper bg-ink px-4 py-2 rounded-md hover:bg-[#2e2a24] transition-colors duration-150">Create account</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

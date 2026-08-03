@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="FastAPI blog"
+    />
+    <title>
+      {% if title %}{{ title }} · MyBlog{% else %}MyBlog{% endif %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href={{ url_for('static', path='css/main.css') }} />
+  </head>
+  <body class="bg-paper text-ink font-sans min-h-screen flex flex-col">
+    {% include 'partials/navbar.html' %}
+
+    <main class="flex-1 max-w-5xl mx-auto w-full px-4 md:px-6 py-10">
+      {% include 'partials/flash.html' %}
+
+      {% block main %}{% endblock %}
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script src={{ url_for('static', path='js/main.js') }}></script>
+  </body>
+</html>

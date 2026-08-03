@@ -1,0 +1,46 @@
+<article class="group bg-paper rounded-lg border border-paper-3 hover:border-accent/40 hover:shadow-sm transition-all duration-200 overflow-hidden">
+
+  <!-- Cover image -->
+  {% if post.cover_image %}
+    <a href={{ url_for("show_post", post_id=post.id) }}>
+      <img src="<%= post.cover_image %>" alt="<%= post.title %>"
+           class="w-full h-44 object-cover group-hover:opacity-90 transition-opacity duration-200">
+    </a>
+  {% endif %}
+
+  <div class="p-5">
+
+    <!-- Tags -->
+    {% if post.tags  %}
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        {% for tag in post.tags %}
+        <a href="/posts/search?q={{tag}}"
+             class="text-[0.7rem] font-medium px-2 py-0.5 rounded-full bg-paper-2 text-ink-muted
+                    hover:bg-accent hover:text-white transition-colors duration-150">
+            {{tag}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Title -->
+    <h2 class="font-serif text-lg text-ink leading-snug mb-2 line-clamp-2">
+      <a href={{ url_for("show_post", post_id=post.id) }}
+         class="hover:text-accent transition-colors duration-150">
+        {{post.title}}
+      </a>
+    </h2>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between pt-3 mt-3 border-t border-paper-3">
+      <a href={{ url_for("user_posts", user_id=post.author.id) }} class="flex items-center gap-2 no-underline">
+        <img src={{ post.author.img_path }} alt={{ post.author.username }}
+             class="w-6 h-6 rounded-full object-cover border border-paper-3 shrink-0">
+        <span class="text-xs text-ink-muted">{{ post.author.username }}</span>
+      </a>
+
+      <span class="text-xs text-ink-faint">{{ post.date_posted.strftime("%B %d, %Y") }}</span>
+    </div>
+
+  </div>
+</article>

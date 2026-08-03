@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Create account · MyBlog</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href={{ url_for('static', path='css/main.css') }} >
+
+</head>
+<body class="min-h-screen grid grid-cols-1 md:grid-cols-2">
+
+  <!-- Left decorative panel -->
+  <aside class="hidden md:flex flex-col justify-between px-12 py-10 bg-ink text-paper relative overflow-hidden before:content-[''] before:absolute before:-top-20 before:-right-20 before:w-90 before:h-90 before:rounded-full before:bg-[radial-gradient(circle,#c17f3a22_0%,transparent_70%)] before:pointer-events-none after:content-[''] after:absolute after:-bottom-15 after:-left-15 after:w-70 after:h-70 after:rounded-full after:bg-[radial-gradient(circle,#c17f3a18_0%,transparent_70%)] after:pointer-events-none">
+    <a href="/" class="flex items-center gap-2.5 no-underline relative z-10">
+      <div class="w-8.5 h-8.5 rounded-[8px] bg-accent flex items-center justify-center font-serif font-semibold text-base text-white tracking-[-0.5px]">M</div>
+      <span class="font-serif text-[1.15rem] font-semibold text-paper">MyBlog</span>
+    </a>
+
+    <div class="relative z-10">
+      <h2 class="font-serif text-[2.4rem] leading-tight font-normal text-paper mb-5">
+        Start writing<br><em class="text-accent italic">today.</em>
+      </h2>
+      <p class="text-[0.9rem] text-[#a09888] leading-[1.65] max-w-[320px]">
+        Join a community of writers sharing essays, tutorials,
+        and ideas that take more than a tweet to explain.
+      </p>
+    </div>
+
+    <blockquote class="relative z-10 border-l-2 border-accent pl-4">
+      <p class="font-serif italic text-[0.9rem] text-[#a09888] leading-[1.6]">"Writing is thinking. To write well is to think clearly."</p>
+      <cite class="block mt-[0.4rem] not-italic text-[0.78rem] text-ink-muted">— David McCullough</cite>
+    </blockquote>
+  </aside>
+
+  <!-- Right form panel -->
+  <main class="flex flex-col justify-center px-7 py-10 md:px-14 md:py-12 bg-paper">
+    <div class="max-w-95 w-full mx-auto">
+
+      <header class="mb-9">
+        <p class="text-[0.72rem] font-medium tracking-[0.12em] uppercase text-accent mb-[0.55rem]">Get started</p>
+        <h1 class="font-serif text-[2rem] font-normal text-ink leading-[1.2]">Create your<br>account</h1>
+      </header>
+
+      {% if flash.error %}
+        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
+          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="7"/>
+            <path d="M8 5v3.5M8 11h.01"/>
+          </svg>
+          <span>{{ flash.error }}</span>
+        </div>
+      {% endif %}
+
+      {% if flash.success %}
+        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#f0faf5] border border-[#b8ddc9] text-success" role="alert">
+          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="7"/>
+            <path d="M5.5 8.5l2 2 3-3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>{{ flash.success }}</span>
+        </div>
+      {% endif %}
+
+      {% if errors.length %}
+        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
+          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="7"/>
+            <path d="M8 5v3.5M8 11h.01"/>
+          </svg>
+          <ul class="list-none [&>li+li]:mt-1">
+            {% for e in errors %}
+            <li>{{ e.msg }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <!-- Register form -->
+      <form method="POST" action="/auth/register" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Username -->
+        <div class="mb-5">
+          <label for="username" class="block text-[0.8rem] font-medium text-ink-muted mb-[0.4rem] tracking-[0.02em]">Username</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="5.5" r="2.75"/>
+                <path d="M2.5 14c0-2.9 2.46-4.75 5.5-4.75S13.5 11.1 13.5 14" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autocomplete="username"
+              placeholder="jane_doe"
+              value={% if formData  %} {{ formData.username }} {% else %} "" {% endif %}
+              minlength="3"
+              maxlength="50"
+              required
+              class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
+            >
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-5">
+          <label for="email" class="block text-[0.8rem] font-medium text-ink-muted mb-[0.4rem] tracking-[0.02em]">Email address</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="1.5" y="3.5" width="13" height="10" rx="2"/>
+                <path d="M1.5 6l5.8 3.5a1.5 1.5 0 001.4 0L14.5 6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              value={% if formData  %} {{ formData.email }} {% else %} "" {% endif %}
+              required
+              class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
+            >
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-5">
+          <label for="password" class="block text-[0.8rem] font-medium text-ink-muted mb-[0.4rem] tracking-[0.02em]">Password</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+                <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+                <circle cx="8" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              minlength="8"
+              required
+              class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
+            >
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" onclick="togglePw('password', this)" aria-label="Toggle password visibility">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                <circle cx="8" cy="8" r="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="mb-5">
+          <label for="confirm_password" class="block text-[0.8rem] font-medium text-ink-muted mb-[0.4rem] tracking-[0.02em]">Confirm password</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+                <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+                <circle cx="8" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              minlength="8"
+              required
+              class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
+            >
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" onclick="togglePw('confirm_password', this)" aria-label="Toggle password visibility">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                <circle cx="8" cy="8" r="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="mb-7">
+          <label class="flex items-start gap-2 cursor-pointer text-[0.82rem] text-ink-muted select-none">
+            <input type="checkbox" name="terms" value="1" required class="w-4 h-4 mt-0.5 accent-accent cursor-pointer">
+            I agree to the Terms of Service and Privacy Policy
+          </label>
+        </div>
+
+        <button type="submit" class="group w-full h-12 bg-ink text-paper border-0 rounded-md font-sans text-[0.9rem] font-medium cursor-pointer flex items-center justify-center gap-2 transition-[background-color,transform] duration-150 tracking-[0.02em] hover:bg-[#2e2a24] active:scale-[0.99]">
+          Create account
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="transition-transform duration-150 group-hover:translate-x-0.75">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="flex items-center gap-3 my-6 text-ink-faint text-[0.78rem] before:content-[''] before:flex-1 before:h-px before:bg-paper-3 after:content-[''] after:flex-1 after:h-px after:bg-paper-3">or</div>
+
+      <div class="mt-7 text-center text-[0.83rem] text-ink-muted">
+        Already have an account?
+        <a href="/auth/login" class="text-accent font-medium no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Sign in</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.innerHTML = isHidden
+        ? `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+             <path d="M2 2l12 12M6.5 6.6A2 2 0 0110 9.5M4.2 4.3C2.6 5.4 1 8 1 8s2.5 5 7 5a7 7 0 003.8-1.2M6 3.1A7 7 0 0115 8s-.8 1.7-2.2 3"/>
+           </svg>`
+        : `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+             <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+             <circle cx="8" cy="8" r="2"/>
+           </svg>`;
+    }
+  </script>
+</body>
+</html>

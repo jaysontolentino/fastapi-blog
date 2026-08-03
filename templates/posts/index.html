@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+<header class="mb-8">
+  <p class="text-[0.72rem] font-medium tracking-[0.12em] uppercase text-accent mb-2">Latest</p>
+  <h1 class="font-serif text-3xl text-ink">All posts</h1>
+</header>
+
+{% if posts %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+{% for post in posts %}
+  {% include "partials/post-card.html" %}
+{% endfor %}
+</div>
+{% else %}
+<div class="text-center py-20 text-ink-faint text-sm">No posts yet.</div>
+{% endif %}
+{% endblock main %}

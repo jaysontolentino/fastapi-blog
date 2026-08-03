@@ -1,0 +1,320 @@
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1a1611;
+      --ink-muted: #6b6459;
+      --ink-faint: #b0a898;
+      --paper:     #faf8f5;
+      --paper-2:   #f3f0ea;
+      --paper-3:   #e8e3d9;
+      --accent:    #c17f3a;
+      --serif:     'Lora', Georgia, serif;
+      --sans:      'DM Sans', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top navbar strip ───────────────────────── */
+    .topbar {
+      padding: 1.1rem 2.5rem;
+      border-bottom: 1px solid var(--paper-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .topbar-link {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .topbar-link:hover { color: var(--ink); }
+
+    /* ── Main content ───────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    /* ── Error code display ─────────────────────── */
+    .code-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .digit {
+      font-family: var(--serif);
+      font-size: clamp(5rem, 14vw, 9rem);
+      font-weight: 600;
+      line-height: 1;
+      color: var(--paper-2);
+      letter-spacing: -0.04em;
+      position: relative;
+      display: inline-block;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .digit:nth-child(1) { animation-delay: 0s; }
+    .digit:nth-child(2) { animation-delay: 0.08s; }
+    .digit:nth-child(3) { animation-delay: 0.16s; }
+
+    /* Middle digit gets an ink circle overlay */
+    .digit-mid {
+      color: var(--ink);
+    }
+
+    .digit-mid::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid var(--paper-3);
+      z-index: -1;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Divider line ───────────────────────────── */
+    .divider-line {
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 1px;
+      margin: 0 auto 1.75rem;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+
+    /* ── Titles ─────────────────────────────────── */
+    .error-title {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 0.7rem;
+      animation: fadeUp 0.5s 0.35s ease both;
+    }
+
+    .error-sub {
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      line-height: 1.65;
+      max-width: 380px;
+      margin: 0 auto 0.5rem;
+      animation: fadeUp 0.5s 0.4s ease both;
+    }
+
+    .error-custom-msg {
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      margin-top: 0.4rem;
+      max-width: 380px;
+      animation: fadeUp 0.5s 0.42s ease both;
+    }
+
+    /* ── Action buttons ─────────────────────────── */
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2.25rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.5s 0.48s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-family: var(--sans);
+      font-size: 0.86rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .btn-primary:hover { background: #2e2a24; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink-muted);
+      border: 1.5px solid var(--paper-3);
+    }
+
+    .btn-secondary:hover {
+      background: var(--paper-2);
+      color: var(--ink);
+      border-color: var(--paper-3);
+    }
+
+    /* ── Quick links ────────────────────────────── */
+    .quick-links {
+      margin-top: 3.5rem;
+      animation: fadeUp 0.5s 0.55s ease both;
+    }
+
+    .quick-links p {
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .quick-links ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .quick-links a {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s;
+    }
+
+    .quick-links a:hover { color: var(--accent); }
+
+    .quick-links a svg { flex-shrink: 0; }
+
+    /* ── Stack trace (dev only) ──────────────────── */
+    .stack-trace {
+      margin: 3rem auto 0;
+      max-width: 680px;
+      width: 100%;
+      text-align: left;
+      animation: fadeUp 0.5s 0.6s ease both;
+    }
+
+    .stack-trace summary {
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      cursor: pointer;
+      user-select: none;
+      padding: 0.4rem 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .stack-trace summary:hover { color: var(--ink-muted); }
+
+    .stack-trace pre {
+      margin-top: 0.75rem;
+      background: var(--ink);
+      color: #e8e0d4;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.75rem;
+      font-family: 'Courier New', monospace;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer {
+      padding: 1.25rem 2.5rem;
+      border-top: 1px solid var(--paper-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+    }
+
+    footer a {
+      color: var(--ink-faint);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    footer a:hover { color: var(--ink-muted); }
+
+    /* ── Decorative background dots ─────────────── */
+    .bg-dots {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--paper-3);
+    }
+
+    main { position: relative; z-index: 1; }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 1rem 1.25rem; }
+      .actions { flex-direction: column; width: 100%; max-width: 280px; }
+      .btn { width: 100%; justify-content: center; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }

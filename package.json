@@ -1,0 +1,10 @@
+{
+  "name": "blog-app",
+  "scripts": {
+    "start": "npx @tailwindcss/cli -i ./public/css/input.css -o ./public/css/main.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

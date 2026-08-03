@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv
+
+# Node
+node_modules/
+.yarn/
+.pnp.*
+
+# App data
+blog.db
+media/
+
+# Editor / OS
+.DS_Store
+.claude/settings.local.json
