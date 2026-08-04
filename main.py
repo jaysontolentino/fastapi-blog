@@ -69,7 +69,11 @@ def register(req: Request):
 @app.get("/", include_in_schema=False, name="home")
 @app.get("/posts", include_in_schema=False, name="posts")
 async def index(req: Request, db: Annotated[AsyncSession, Depends(get_db)]):
-    stmnt = select(model.Post).options(selectinload(model.Post.author))
+    stmnt = (
+        select(model.Post)
+        .options(selectinload(model.Post.author))
+        .order_by(model.Post.date_posted.desc())
+    )
     posts = (await db.execute(stmnt)).scalars().all()
     return template.TemplateResponse(
         request=req,

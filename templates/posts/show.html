@@ -43,24 +43,146 @@
   </div>
 
   <!-- Edit / Delete (owner or admin) -->
-  {% if user %}
+  {% if True %}
     <div class="flex gap-3 mt-10 pt-6 border-t border-paper-3">
-      <a href="/posts/{{post.slug}}/edit"
-         class="text-sm px-4 py-2 rounded-md border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink transition-colors duration-150">
+      <button data-modal-target="#edit-post-modal" class="text-sm px-4 py-2 rounded-md border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink transition-colors duration-150">
         Edit post
       </a>
-      <form method="POST" action="/posts/{{post.id}}/delete"
-            onsubmit="return confirm('Delete this post?')">
-        <input type="hidden" name="_csrf" value="">
-        <button class="text-sm px-4 py-2 rounded-md border border-danger/30
-                       text-danger hover:bg-danger/10 transition-colors duration-150">
-          Delete
-        </button>
-      </form>
+      <button type="button" data-modal-target="#delete-post-modal"
+              class="text-sm px-4 py-2 rounded-md border border-danger/30
+                     text-danger hover:bg-danger/10 transition-colors duration-150">
+        Delete
+      </button>
     </div>
-{% endif %}
 
-  <!-- Comments -->
-
+    {% include "partials/delete-post-confirmation-modal.html" %}
+    {% include "partials/edit-post-modal.html" %}
+  {% endif %}
 </article>
+
 {% endblock main %}
+
+{% block script %}
+<script type="module">
+  import {extractError} from '/public/js/utils.js';
+
+  const postId = {{ post.id }};
+
+  const postEditForm = document.getElementById('edit_post_form');
+  const btnFormSubmit = document.getElementById('edit-submit-btn');
+
+  btnFormSubmit.disabled = true
+
+  const oldTitle = "{{ post.title }}";
+  const oldBody = "{{ post.body }}";
+  const oldTags = "{{ post.tags | join(', ') | trim }}";
+
+  document.querySelectorAll('.edit-input').forEach((input) => {
+    input.addEventListener('change', (e) => {
+      const isDirty = checkFormChange()
+
+      console.log(`Input ${e.name} was changed: `, e.target.value)
+
+      if (isDirty) {
+        btnFormSubmit.disabled = false;
+        btnFormSubmit.innerHTML = "Save";
+      } else {
+        btnFormSubmit.disabled = true;
+        btnFormSubmit.innerHTML = "Edit";
+      }
+    });
+  });
+  
+
+  postEditForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    btnFormSubmit.disabled = true;
+    btnFormSubmit.innerHTML = "Updating...";
+
+    const editForm = new FormData(postEditForm);
+    const formData = Object.fromEntries(editForm.entries());
+
+    delete formData.id;
+    formData.tags = formData.tags.split(',').map(i => i.trim());
+
+    try {
+      // POST to our API as JSON
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        document.getElementById("successMessage").textContent = "Post updated successfully!";
+        Modal.close('#edit-post-modal');
+
+        Modal.open("#success-modal", {
+              onDismis: () => {
+                // Reload page after modal is hidden to show new post
+                window.location.reload();
+              }
+        });
+
+        // Clear form
+        editForm.reset();
+        btnFormSubmit.disabled = true;
+        btnFormSubmit.innerHTML = "Edit";
+
+      } else {
+        btnFormSubmit.disabled = false;
+        btnFormSubmit.innerHTML = "Save";
+        const {message} = await extractError(response);
+        document.getElementById("errorMessage").textContent = message;
+        Modal.open("#error-modal");
+      }
+    } catch {
+      console.log("Error occured >> ", error)
+      btnFormSubmit.disabled = false;
+        btnFormSubmit.innerHTML = "Save";
+      document.getElementById("errorMessage").textContent = "Network error. Please check your connection and try again.";
+      Modal.open("#error-modal");
+    }
+  });
+
+  function checkFormChange() {
+    const titleEl = document.getElementById('edit-input-post-title');
+    const bodyEl = document.getElementById('edit-input-post-body');
+    const tagsEl = document.getElementById('edit-input-post-tags');
+
+    if (titleEl.value !== oldTitle || bodyEl.value !== oldBody || tagsEl.value !== oldTags) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Handle post delete
+  const btnDelete = document.getElementById('btn_delete_post');
+  btnDelete.addEventListener('click', async (e) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: "DELETE"
+      });
+
+      // Status 204 - No Content
+      if (response.status === 204) {
+        // Redirect to home page
+        window.location.href = "/";
+      } else {
+        const {message} = await extractError(response);
+        document.getElementById("errorMessage").textContent = message;
+        Modal.open("#error-modal");
+      }
+    } catch {
+      document.getElementById("errorMessage").textContent = "Network error. Please check your connection and try again.";
+      Modal.open("#error-modal");
+    }
+  });
+
+</script>
+{% endblock script %}

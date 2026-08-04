@@ -1,0 +1,35 @@
+<!-- Success modal — opened via Modal.open('#success-modal') after a successful action -->
+<div id="success-modal"
+     class="modal hidden fixed inset-0 z-100 items-center justify-center p-4 bg-ink/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div data-modal-dialog
+       class="relative bg-paper rounded-lg border border-paper-3 shadow-xl w-full max-w-md p-6 opacity-0 scale-95 translate-y-2 transition-all duration-200"
+       role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
+
+    <button type="button" data-modal-dismiss aria-label="Close"
+            class="absolute top-3 right-3 p-1.5 rounded-md text-ink-faint hover:text-ink-muted hover:bg-paper-2 transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M4 4l8 8M12 4l-8 8"/>
+      </svg>
+    </button>
+
+    <div class="flex items-start gap-3 pr-6">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-success/10 text-success">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="8" cy="8" r="6.5"/>
+          <path d="M5.5 8.5l2 2 3-3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h2 id="success-modal-title" class="font-serif text-lg text-ink">Success</h2>
+        <p id="successMessage" class="text-sm text-ink-muted mt-1 leading-relaxed"></p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button type="button" data-modal-dismiss
+              class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper bg-ink text-paper hover:bg-[#2e2a24]">
+        OK
+      </button>
+    </div>
+  </div>
+</div>

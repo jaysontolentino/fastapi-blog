@@ -21,11 +21,80 @@
     <main class="flex-1 max-w-5xl mx-auto w-full px-4 md:px-6 py-10">
       {% include 'partials/flash.html' %}
 
-      {% block main %}{% endblock %}
+      {% block main %}{% endblock main %}
     </main>
 
     {% include 'partials/footer.html' %}
 
-    <script src={{ url_for('static', path='js/main.js') }}></script>
+    {% include 'partials/success-modal.html' %}
+
+    {% include 'partials/error-modal.html' %}
+
+    <script src="{{ url_for('static', path='js/modal.js') }}"></script>
+
+    <script type="module">
+
+      import {extractError} from '/public/js/utils.js'
+
+      const newPostForm = document.getElementById('new_post_form')
+
+      newPostForm.addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        const formData = new FormData(newPostForm);
+        const postData = Object.fromEntries(formData.entries());
+
+        const tags = postData.tags ? postData.tags.split(",").map(i => i.trim()) : [];
+        postData.tags = tags;
+
+        //Temporary
+        postData.user_id = 1
+
+        try {
+          // POST to our API as JSON
+          const response = await fetch("/api/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById("successMessage").textContent =
+                `Post "${data.title}" created successfully!`;
+
+            Modal.close('#new-post-modal');
+
+            Modal.open("#success-modal", {
+              onDismis: () => {
+                // Reload page after modal is hidden to show new post
+                window.location.reload();
+              }
+            });
+
+            // Clear form
+            newPostForm.reset();
+
+          } else {
+
+            const {message} = await extractError(response);
+
+            document.getElementById("errorMessage").textContent = message;
+
+            Modal.open("#error-modal");
+          }
+        } catch (error) {
+          console.log("Error occured >> ", error)
+            document.getElementById("errorMessage").textContent =
+            "Network error. Please check your connection and try again.";
+            Modal.open("#error-modal");
+        }
+      });
+
+    </script>
+    {% block script %}{% endblock script %}
   </body>
 </html>

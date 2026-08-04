@@ -7,7 +7,7 @@
 </header>
 
 {% if posts %}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1  gap-6">
 {% for post in posts %}
   {% include "partials/post-card.html" %}
 {% endfor %}
@@ -16,3 +16,4 @@
 <div class="text-center py-20 text-ink-faint text-sm">No posts yet.</div>
 {% endif %}
 {% endblock main %}
+

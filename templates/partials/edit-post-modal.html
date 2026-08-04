@@ -1,0 +1,49 @@
+<!-- New post modal — opened via data-modal-target="#new-post-modal" (see navbar.html) -->
+<div id="edit-post-modal"
+     class="modal hidden fixed inset-0 z-100 items-center justify-center p-4 bg-ink/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div data-modal-dialog
+       class="relative bg-paper rounded-lg border border-paper-3 shadow-xl w-full max-w-md p-6 opacity-0 scale-95 translate-y-2 transition-all duration-200"
+       role="dialog" aria-modal="true" aria-labelledby="edit-post-modal-title">
+
+    <button type="button" data-modal-dismiss aria-label="Close"
+            class="absolute top-3 right-3 p-1.5 rounded-md text-ink-faint hover:text-ink-muted hover:bg-paper-2 transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M4 4l8 8M12 4l-8 8"/>
+      </svg>
+    </button>
+
+    <h2 id="edit-post-modal-title" class="font-serif text-lg text-ink pr-6">Edit post</h2>
+
+    <form id="edit_post_form" class="mt-5 space-y-4">
+      <input id="edit-post-id" name="id" type="hidden" value="{{ post.id }}">
+      <div>
+        <label for="edit-input-post-title" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Title</label>
+        <input id="edit-input-post-title" name="title" value="{{ post.title }}" type="text" placeholder="Give your post a title" required autofocus
+               class="edit-input w-full h-11 px-3.5 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+      </div>
+
+      <div>
+        <label for="edit-input-post-tags" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Tags</label>
+        <input id="edit-input-post-tags" name="tags" value="{{ post.tags | join(", ") | trim }}" type="text" placeholder="dev, python, tutorial"
+               class="edit-input w-full h-11 px-3.5 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+      </div>
+
+      <div>
+        <label for="edit-input-post-body" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Body</label>
+        <textarea id="edit-input-post-body" name="body" rows="5" placeholder="Write your post…" required
+                  class="edit-input w-full px-3.5 py-2.5 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18] resize-none">{{ post.body }}</textarea>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button type="button" data-modal-dismiss
+                class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink">
+          Cancel
+        </button>
+        <button disabled id="edit-submit-btn" type="submit"
+                class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper bg-ink text-paper hover:bg-[#2e2a24] disabled:cursor-not-allowed disabled:bg-ink-muted">
+          Edit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

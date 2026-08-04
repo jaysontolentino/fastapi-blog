@@ -40,7 +40,7 @@ class Post(BaseModel):
     user_id: Mapped[int] = mapped_column(ForeignKey(column="users.id"), nullable=False)
     date_posted: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(tz=UTC),
+        default=lambda: datetime.now(tz=UTC),
     )
 
     author: Mapped[User] = relationship(back_populates="posts")
