@@ -1,13 +1,29 @@
+from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from auth import (
+    create_access_token,
+    hash_password,
+    oauth2_scheme,
+    verify_access_token,
+    verify_hash_password,
+)
 from database import get_db
 from model import Post, User
-from schema import CreateUser, PostResponse, UpdateUser, UserResponse
+from schema import (
+    CreateUser,
+    PostResponse,
+    Token,
+    UpdateUser,
+    UserPrivateResponse,
+    UserResponse,
+)
 
 router = APIRouter()
 
@@ -15,7 +31,7 @@ router = APIRouter()
 # CREATE USER
 @router.post(
     "",
-    response_model=UserResponse,
+    response_model=UserPrivateResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
@@ -25,7 +41,7 @@ async def create_user(
 
     # Validate if username exist
     username_exist_stmnt = select(User).where(
-        User.username == create_user_input.username,
+        func.lower(User.username) == create_user_input.username.lower(),
     )
     username_exist = (await db.execute(username_exist_stmnt)).scalars().first()
 
@@ -37,7 +53,7 @@ async def create_user(
 
     # Validate if email is exist
     email_exist_stmnt = select(User).where(
-        User.email == create_user_input.email,
+        func.lower(User.email) == create_user_input.email.lower(),
     )
     email_exist = (await db.execute(email_exist_stmnt)).scalars().first()
 
@@ -49,14 +65,79 @@ async def create_user(
 
     new_user = User(
         username=create_user_input.username,
-        email=create_user_input.email,
+        email=create_user_input.email.lower(),
+        hash_password=hash_password(create_user_input.password),
     )
 
     db.add(new_user)
     await db.commit()
-    await db.refresh(new_user, attribute_names=["author"])
+    await db.refresh(new_user)
 
     return new_user
+
+
+@router.post("/token", response_model=Token)
+async def sign_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    query_user = await db.execute(
+        select(User).where(func.lower(User.email) == form_data.username.lower()),
+    )
+    user = query_user.scalars().first()
+
+    if not user or not verify_hash_password(form_data.password, user.hash_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    payload = {
+        "sub": str(user.id),
+    }
+
+    access_token = create_access_token(data=payload, expire_delta=timedelta(minutes=20))
+
+    return Token(
+        access_token=access_token,
+        token_type="bearer",  # noqa: S106
+    )
+
+
+@router.get("/me", response_model=UserPrivateResponse)
+async def get_authed_user(
+    access_token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Verify if access token is valid."""
+    decoded_user_id = verify_access_token(access_token)
+    if decoded_user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expire access token 1",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    """Verify id decoded user id is valid integer."""
+    try:
+        user_id = int(decoded_user_id)
+    except (TypeError, ValueError):
+        raise HTTPException(  # noqa: B904
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expire access token 2",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    query_user = await db.execute(select(User).where(User.id == user_id))
+    user = query_user.scalars().first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expire access token 3",
+        )
+    return user
 
 
 # UPDATE USER

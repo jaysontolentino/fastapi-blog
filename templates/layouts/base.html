@@ -19,8 +19,6 @@
     {% include 'partials/navbar.html' %}
 
     <main class="flex-1 max-w-5xl mx-auto w-full px-4 md:px-6 py-10">
-      {% include 'partials/flash.html' %}
-
       {% block main %}{% endblock main %}
     </main>
 
@@ -31,6 +29,43 @@
     {% include 'partials/error-modal.html' %}
 
     <script src="{{ url_for('static', path='js/modal.js') }}"></script>
+
+    <script type="module">
+      import { getCurrentUser, logout } from '/public/js/auth.js';
+
+      async function updateUI() {
+        const currentUser = await getCurrentUser();
+        const authedEl = document.getElementById('authed-nav-items');
+        const notAuthedEl = document.getElementById('not-authed-nav-items');
+
+        if (currentUser) {
+          authedEl.classList.add('flex');
+          authedEl.classList.remove('hidden');
+          notAuthedEl.classList.add('hidden');
+          notAuthedEl.classList.remove('flex');
+
+          const userImgEl = document.getElementById('user-profile-img');
+          const userNameEl = document.getElementById('user-profile-username');
+
+          userImgEl.src = currentUser.img_path;
+          userNameEl.textContent = currentUser.username;
+
+          const btnLogout = document.getElementById('btn_logout');
+
+          btnLogout.addEventListener('click', function () {
+            logout();
+            window.location.reload();
+          });
+        } else {
+          authedEl.classList.add('hidden');
+          authedEl.classList.remove('flex');
+          notAuthedEl.classList.add('flex');
+          notAuthedEl.classList.remove('hidden');
+        }
+      }
+
+      updateUI();
+    </script>
 
     <script type="module">
 

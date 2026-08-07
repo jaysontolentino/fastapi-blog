@@ -47,43 +47,8 @@
         <h1 class="font-serif text-[2rem] font-normal text-ink leading-[1.2]">Sign in to<br>your account</h1>
       </header>
 
-      {% if flash.error %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M8 5v3.5M8 11h.01"/>
-          </svg>
-          <span>{{ flash.error }}</span>
-        </div>
-      {% endif %}
-
-      {% if flash.success %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#f0faf5] border border-[#b8ddc9] text-success" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M5.5 8.5l2 2 3-3.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>{{ lash.success }}</span>
-        </div>
-      {% endif %}
-
-      {% if errors.length %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M8 5v3.5M8 11h.01"/>
-          </svg>
-          <ul class="list-none [&>li+li]:mt-1">
-            {% for e in errors %}
-            <li>{{ e.msg }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
-
       <!-- Login form -->
-      <form method="POST" action="/auth/login" novalidate>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <form id="login_form">
 
         <!-- Email -->
         <div class="mb-5">
@@ -98,10 +63,9 @@
             <input
               type="email"
               id="email"
-              name="email"
+              name="username"
               autocomplete="email"
               placeholder="you@example.com"
-              value={% if formData  %} {{ formData.email }} {% else %} "" {% endif %}
               required
               class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
             >
@@ -128,7 +92,7 @@
               required
               class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
             >
-            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" onclick="togglePw('password', this)" aria-label="Toggle password visibility">
+            <button id="btn_toggle_password" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" aria-label="Toggle password visibility">
               <svg id="pw-eye" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
                 <circle cx="8" cy="8" r="2"/>
@@ -145,9 +109,9 @@
           <a href="/auth/forgot-password" class="text-[0.82rem] text-accent no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Forgot password?</a>
         </div>
 
-        <button type="submit" class="group w-full h-12 bg-ink text-paper border-0 rounded-md font-sans text-[0.9rem] font-medium cursor-pointer flex items-center justify-center gap-2 transition-[background-color,transform] duration-150 tracking-[0.02em] hover:bg-[#2e2a24] active:scale-[0.99]">
+        <button type="submit" class="group w-full h-12 bg-ink text-paper border-0 rounded-md font-sans text-[0.9rem] font-medium cursor-pointer flex items-center justify-center gap-2 transition-[background-color,transform] duration-150 tracking-[0.02em] hover:bg-[#2e2a24] active:scale-[0.99]" >
           Sign in
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="transition-transform duration-150 group-hover:translate-x-0.75>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="transition-transform duration-150 group-hover:translate-x-0.75">
             <path d="M3 8h10M9 4l4 4-4 4"/>
           </svg>
         </button>
@@ -157,26 +121,66 @@
 
       <div class="mt-7 text-center text-[0.83rem] text-ink-muted">
         Don't have an account?
-        <a href="/auth/register" class="text-accent font-medium no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Create one free</a>
+        <a href={{ url_for('register') }} class="text-accent font-medium no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Create one free</a>
       </div>
 
     </div>
   </main>
 
-  <script>
-    function togglePw(id, btn) {
-      const input = document.getElementById(id);
-      const isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      btn.innerHTML = isHidden
-        ? `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-             <path d="M2 2l12 12M6.5 6.6A2 2 0 0110 9.5M4.2 4.3C2.6 5.4 1 8 1 8s2.5 5 7 5a7 7 0 003.8-1.2M6 3.1A7 7 0 0115 8s-.8 1.7-2.2 3"/>
-           </svg>`
-        : `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-             <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
-             <circle cx="8" cy="8" r="2"/>
-           </svg>`;
-    }
+  {% include 'partials/success-modal.html' %}
+
+  {% include 'partials/error-modal.html' %}
+
+  <script src="{{ url_for('static', path='js/modal.js') }}"></script>
+
+  <script type="module">
+    import { togglePw, extractError } from '/public/js/utils.js';
+    import { setToken } from '/public/js/auth.js';
+
+    const btnTogglePassword = document.getElementById('btn_toggle_password');
+
+    btnTogglePassword.addEventListener('click', function() {
+      togglePw('password', this) 
+    });
+
+    const formLogin = document.getElementById('login_form');
+
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(formLogin);
+
+      try {
+        const response = await fetch("/api/users/token", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const { access_token } = await response.json();
+
+          setToken(access_token);
+
+          document.getElementById("successMessage").textContent = "Login successfully.";
+          Modal.open("#success-modal", {
+            onDismis: () => {
+              window.location.href = "/";
+            }
+          });
+        }
+
+        if (response.status === 401) {
+          const { message } = await extractError(response);
+          document.getElementById("errorMessage").textContent = message;
+          Modal.open("#error-modal");
+        }
+
+      } catch {
+        document.getElementById("errorMessage").textContent = "Network error. Please check your connection and try again.";
+        Modal.open("#error-modal");
+      }
+    });
+
   </script>
 </body>
 </html>

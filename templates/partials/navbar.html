@@ -8,25 +8,24 @@
     <nav class="flex items-center gap-5">
       <a href={{url_for('posts')}} class="text-sm text-ink-muted hover:text-ink transition-colors duration-150">Posts</a>
 
-      {% if True %}
+      <div id="authed-nav-items" class="flex items-center gap-5">
         <button id="btn_new_post" type="button" data-modal-target="#new-post-modal" class="inline-flex items-center gap-1.5 text-sm font-medium text-paper bg-ink px-4 py-2 rounded-md hover:bg-[#2e2a24] transition-colors duration-150">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>
           New post
         </button>
 
         <div class="flex items-center gap-3 pl-4 ml-1 border-l border-paper-3">
-          <a href="" class="flex items-center gap-2 no-underline">
-            <img src="" alt="" class="w-7 h-7 rounded-full object-cover border border-paper-3">
-            <span class="text-sm text-ink-muted hidden sm:inline">Test</span>
-          </a>
-          <form method="POST" action="/logout" class="inline">
-            <button class="text-sm text-ink-faint hover:text-danger transition-colors duration-150">Sign out</button>
-          </form>
-        </div>
-      {% else %}
-        <a href="/auth/login" class="text-sm text-ink-muted hover:text-ink transition-colors duration-150">Sign in</a>
-        <a href="/auth/register" class="text-sm font-medium text-paper bg-ink px-4 py-2 rounded-md hover:bg-[#2e2a24] transition-colors duration-150">Create account</a>
-      {% endif %}
+          <div class="flex items-center gap-2">
+            <img id="user-profile-img" src="" alt="" class="w-7 h-7 rounded-full object-cover border border-paper-3">
+            <span id="user-profile-username" class="text-sm text-ink-muted hidden sm:inline"></span>
+          </div>
+        </div> 
+      </div>
+       
+      <div id="not-authed-nav-items" class="flex items-center gap-5">
+        <a href={{ url_for('login') }} class="text-sm text-ink-muted hover:text-ink transition-colors duration-150">Sign in</a>
+        <a href={{ url_for('register') }} class="text-sm font-medium text-paper bg-ink px-4 py-2 rounded-md hover:bg-[#2e2a24] transition-colors duration-150">Create account</a>
+      </div>
     </nav>
   </div>
 </header>

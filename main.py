@@ -44,26 +44,12 @@ app.include_router(posts.router, prefix="/api/posts", tags=["posts"])
 
 @app.get("/login", include_in_schema=False)
 def login(req: Request):
-    return template.TemplateResponse(
-        request=req,
-        name="auth/login.html",
-        context={
-            "flash": {"error": False, "sucess": False},
-            "errors": [],
-        },
-    )
+    return template.TemplateResponse(request=req, name="auth/login.html")
 
 
 @app.get("/register", include_in_schema=False)
 def register(req: Request):
-    return template.TemplateResponse(
-        request=req,
-        name="auth/register.html",
-        context={
-            "flash": {"error": False, "sucess": False},
-            "errors": [],
-        },
-    )
+    return template.TemplateResponse(request=req, name="auth/register.html")
 
 
 @app.get("/", include_in_schema=False, name="home")

@@ -16,6 +16,7 @@ class User(BaseModel):
     id: Mapped[int] = mapped_column(Integer, index=True, primary_key=True)
     username: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    hash_password: Mapped[str] = mapped_column(String(255), nullable=False)
     img_file: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     posts: Mapped[list[Post]] = relationship(

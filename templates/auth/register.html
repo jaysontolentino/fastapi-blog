@@ -47,43 +47,8 @@
         <h1 class="font-serif text-[2rem] font-normal text-ink leading-[1.2]">Create your<br>account</h1>
       </header>
 
-      {% if flash.error %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M8 5v3.5M8 11h.01"/>
-          </svg>
-          <span>{{ flash.error }}</span>
-        </div>
-      {% endif %}
-
-      {% if flash.success %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#f0faf5] border border-[#b8ddc9] text-success" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M5.5 8.5l2 2 3-3.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>{{ flash.success }}</span>
-        </div>
-      {% endif %}
-
-      {% if errors.length %}
-        <div class="px-4 py-3 rounded-md text-[0.85rem] mb-6 flex items-start gap-[0.6rem] bg-[#fdf1f1] border border-[#f0c8c8] text-danger" role="alert">
-          <svg class="shrink-0 w-4 h-4 mt-px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="8" cy="8" r="7"/>
-            <path d="M8 5v3.5M8 11h.01"/>
-          </svg>
-          <ul class="list-none [&>li+li]:mt-1">
-            {% for e in errors %}
-            <li>{{ e.msg }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
-
       <!-- Register form -->
-      <form method="POST" action="/auth/register" novalidate>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <form id="register_form">
 
         <!-- Username -->
         <div class="mb-5">
@@ -154,7 +119,7 @@
               required
               class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
             >
-            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" onclick="togglePw('password', this)" aria-label="Toggle password visibility">
+            <button id="btn_toggle_password" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" aria-label="Toggle password visibility">
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
                 <circle cx="8" cy="8" r="2"/>
@@ -184,13 +149,14 @@
               required
               class="w-full h-11.5 pr-3.5 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-[0.9rem] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]"
             >
-            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" onclick="togglePw('confirm_password', this)" aria-label="Toggle password visibility">
+            <button id="btn_toggle_confirm_password" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted" aria-label="Toggle password visibility">
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
                 <circle cx="8" cy="8" r="2"/>
               </svg>
             </button>
           </div>
+          <span id="password_not_match_error" class="text-xs text-red-500"></span>
         </div>
 
         <!-- Terms -->
@@ -213,26 +179,87 @@
 
       <div class="mt-7 text-center text-[0.83rem] text-ink-muted">
         Already have an account?
-        <a href="/auth/login" class="text-accent font-medium no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Sign in</a>
+        <a href={{ url_for('login') }} class="text-accent font-medium no-underline transition-colors duration-150 hover:text-accent-dk hover:underline">Sign in</a>
       </div>
 
     </div>
   </main>
 
-  <script>
-    function togglePw(id, btn) {
-      const input = document.getElementById(id);
-      const isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      btn.innerHTML = isHidden
-        ? `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-             <path d="M2 2l12 12M6.5 6.6A2 2 0 0110 9.5M4.2 4.3C2.6 5.4 1 8 1 8s2.5 5 7 5a7 7 0 003.8-1.2M6 3.1A7 7 0 0115 8s-.8 1.7-2.2 3"/>
-           </svg>`
-        : `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-             <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
-             <circle cx="8" cy="8" r="2"/>
-           </svg>`;
-    }
+  {% include 'partials/success-modal.html' %}
+
+  {% include 'partials/error-modal.html' %}
+
+  <script src="{{ url_for('static', path='js/modal.js') }}"></script>
+
+  <script type="module">
+    import { togglePw, extractError } from '/public/js/utils.js';
+
+    const btnTogglePassword = document.getElementById('btn_toggle_password');
+    const btnToggleConfirmPassword = document.getElementById('btn_toggle_confirm_password');
+
+    btnTogglePassword.addEventListener('click', function () {
+      togglePw('password', this);
+    });
+    btnToggleConfirmPassword.addEventListener('click', function () {
+      togglePw('confirm_password', this);
+    });
+
+    const passwordEl = document.getElementById('password');
+    const confirmPasswordEl = document.getElementById('confirm_password');
+    const passwordErrorEl = document.getElementById('password_not_match_error');
+
+    confirmPasswordEl.addEventListener('input', (e) => {
+      const passwordValue = passwordEl.value;
+      const passwordConfirmValue = e.target.value;
+
+      if (passwordValue !== passwordConfirmValue) {
+        passwordErrorEl.textContent = "Password do not match.";
+      } else {
+        passwordErrorEl.textContent = "";
+      }
+    });
+
+    const registerFormEl = document.getElementById('register_form');
+
+    registerFormEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const registerForm = new FormData(registerFormEl);
+      const formData = Object.fromEntries(registerForm.entries());
+
+      delete formData.confirm_password;
+      delete formData.terms;
+
+      try {
+        const response = await fetch("/api/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          document.getElementById("successMessage").textContent = `Account created! Please login your account.`;
+          Modal.open("#success-modal", {
+            onDismis: () => {
+              window.location.href = "/login";
+              document.getElementById("successMessage").textContent = "";
+            }
+          });
+        } else {
+          const { message } = await extractError(response);
+          document.getElementById("errorMessage").textContent = message;
+          Modal.open("#error-modal");
+        }
+      } catch (error) {
+        console.log("Error >> ", error)
+        document.getElementById("errorMessage").textContent = "Network error. Please check your connection and try again.";
+        Modal.open("#error-modal");
+      }
+
+    });
+
   </script>
 </body>
 </html>

@@ -85,3 +85,12 @@ function fieldFromLoc(loc) {
   const last = loc[loc.length - 1];
   return typeof last === 'string' ? last : null;
 }
+
+
+export function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  
+  btn.innerHTML = isHidden ? `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l12 12M6.5 6.6A2 2 0 0110 9.5M4.2 4.3C2.6 5.4 1 8 1 8s2.5 5 7 5a7 7 0 003.8-1.2M6 3.1A7 7 0 0115 8s-.8 1.7-2.2 3"/></svg>` : `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>`;
+}
