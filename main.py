@@ -52,6 +52,11 @@ def register(req: Request):
     return template.TemplateResponse(request=req, name="auth/register.html")
 
 
+@app.get("/my-account", include_in_schema=False, name="my_account")
+def my_account(req: Request):
+    return template.TemplateResponse(request=req, name="users/my-account.html")
+
+
 @app.get("/", include_in_schema=False, name="home")
 @app.get("/posts", include_in_schema=False, name="posts")
 async def index(req: Request, db: Annotated[AsyncSession, Depends(get_db)]):

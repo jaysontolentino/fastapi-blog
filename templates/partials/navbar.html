@@ -15,11 +15,14 @@
         </button>
 
         <div class="flex items-center gap-3 pl-4 ml-1 border-l border-paper-3">
-          <div class="flex items-center gap-2">
+          <a href={{ url_for('my_account') }} class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity duration-150">
             <img id="user-profile-img" src="" alt="" class="w-7 h-7 rounded-full object-cover border border-paper-3">
             <span id="user-profile-username" class="text-sm text-ink-muted hidden sm:inline"></span>
-          </div>
-        </div> 
+          </a>
+          <button id="btn_logout" type="button" class="text-sm text-ink-muted hover:text-ink transition-colors duration-150 cursor-pointer bg-transparent border-0 p-0">
+            Log out
+          </button>
+        </div>
       </div>
        
       <div id="not-authed-nav-items" class="flex items-center gap-5">

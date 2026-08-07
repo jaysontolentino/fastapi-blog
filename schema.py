@@ -45,7 +45,7 @@ class PostBase(BaseModel):
 
 
 class CreatePost(PostBase):
-    user_id: int  # TEMPORARY
+    pass
 
 
 class UpdatePost(BaseModel):

@@ -1,0 +1,364 @@
+{% extends "layouts/base.html" %}
+
+{% block main %}
+<div class="max-w-2xl mx-auto">
+
+  <header class="mb-8">
+    <p class="text-[0.72rem] font-medium tracking-[0.12em] uppercase text-accent mb-1">Settings</p>
+    <h1 class="font-serif text-2xl text-ink">My account</h1>
+    <p class="text-sm text-ink-muted mt-1.5">Manage your profile, security, and account.</p>
+  </header>
+
+  <div class="space-y-6">
+
+    <!-- Profile -->
+    <section class="bg-paper rounded-lg border border-paper-3 p-6">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h2 class="font-serif text-lg text-ink">Profile</h2>
+          <p class="text-sm text-ink-muted mt-0.5">Your public username and account email.</p>
+        </div>
+        <button type="button" data-modal-target="#edit-profile-modal"
+                class="shrink-0 h-9 px-3.5 rounded-md text-sm font-medium border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink transition-colors duration-150 cursor-pointer inline-flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+            <path d="M11 2.5l2.5 2.5L5 13.5H2.5V11L11 2.5z"/>
+          </svg>
+          Edit profile
+        </button>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <div class="relative shrink-0">
+          <img id="account-avatar-img" src="/public/user_profile/default.jpg" alt=""
+               class="w-28 h-28 rounded-full object-cover border border-paper-3 bg-paper-2">
+          <button type="button" title="Change photo" aria-label="Change profile photo"
+                  class="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center border-2 border-paper cursor-pointer hover:bg-[#2e2a24] transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+              <path d="M2 5.5A1.5 1.5 0 013.5 4h1.6l.7-1.2a1 1 0 01.86-.5h2.68a1 1 0 01.86.5l.7 1.2h1.6A1.5 1.5 0 0114 5.5v6A1.5 1.5 0 0112.5 13h-9A1.5 1.5 0 012 11.5v-6z"/>
+              <circle cx="8" cy="8.5" r="2.25"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="min-w-0">
+          <p id="account-username" class="font-serif text-xl text-ink truncate">&nbsp;</p>
+          <p id="account-email" class="text-sm text-ink-muted truncate mt-1">&nbsp;</p>
+          <p class="text-xs text-ink-faint mt-2">JPG, PNG, or WEBP. 5MB max.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Change password -->
+    <section class="bg-paper rounded-lg border border-paper-3 p-6">
+      <h2 class="font-serif text-lg text-ink mb-1">Change password</h2>
+      <p class="text-sm text-ink-muted mb-5">Choose a strong password you don't use elsewhere.</p>
+
+      <div class="space-y-4 max-w-sm">
+        <!-- Current password -->
+        <div>
+          <label for="current_password" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Current password</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+                <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+                <circle cx="8" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            <input type="password" id="current_password" name="current_password" autocomplete="current-password" placeholder="••••••••"
+                   class="w-full h-11 pr-10 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+            <button type="button" data-toggle-pw="current_password" aria-label="Toggle password visibility"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                <circle cx="8" cy="8" r="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- New password -->
+        <div>
+          <label for="new_password" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">New password</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+                <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+                <circle cx="8" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            <input type="password" id="new_password" name="new_password" autocomplete="new-password" placeholder="••••••••" minlength="8"
+                   class="w-full h-11 pr-10 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+            <button type="button" data-toggle-pw="new_password" aria-label="Toggle password visibility"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                <circle cx="8" cy="8" r="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm new password -->
+        <div>
+          <label for="confirm_new_password" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Confirm new password</label>
+          <div class="relative">
+            <span class="absolute left-3.25 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none flex items-center">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="7" width="10" height="7.5" rx="1.5"/>
+                <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke-linecap="round"/>
+                <circle cx="8" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            <input type="password" id="confirm_new_password" name="confirm_new_password" autocomplete="new-password" placeholder="••••••••" minlength="8"
+                   class="w-full h-11 pr-10 pl-10 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+            <button type="button" data-toggle-pw="confirm_new_password" aria-label="Toggle password visibility"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-ink-faint p-1 flex items-center transition-colors duration-150 hover:text-ink-muted">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                <circle cx="8" cy="8" r="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button type="button"
+                  class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper bg-ink text-paper hover:bg-[#2e2a24]">
+            Update password
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Danger zone -->
+    <section class="bg-paper rounded-lg border border-danger/30 p-6">
+      <h2 class="font-serif text-lg text-danger mb-4">Danger zone</h2>
+
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-ink">Delete account</p>
+          <p class="text-sm text-ink-muted mt-0.5 max-w-md">Permanently delete your account and all of your posts. This action cannot be undone.</p>
+        </div>
+        <button type="button" data-modal-target="#delete-account-modal"
+                class="shrink-0 h-10 px-4 rounded-md text-sm font-medium border border-danger/30 text-danger hover:bg-danger/10 transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+          Delete account
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Edit profile modal -->
+<div id="edit-profile-modal"
+     class="modal hidden fixed inset-0 z-100 items-center justify-center p-4 bg-ink/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div data-modal-dialog
+       class="relative bg-paper rounded-lg border border-paper-3 shadow-xl w-full max-w-md p-6 opacity-0 scale-95 translate-y-2 transition-all duration-200"
+       role="dialog" aria-modal="true" aria-labelledby="edit-profile-modal-title">
+
+    <button type="button" data-modal-dismiss aria-label="Close"
+            class="absolute top-3 right-3 p-1.5 rounded-md text-ink-faint hover:text-ink-muted hover:bg-paper-2 transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M4 4l8 8M12 4l-8 8"/>
+      </svg>
+    </button>
+
+    <h2 id="edit-profile-modal-title" class="font-serif text-lg text-ink pr-6">Edit profile</h2>
+
+    <form id="edit_profile_form" class="mt-5 space-y-4">
+      <div>
+        <label for="edit-profile-username" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Username</label>
+        <input id="edit-profile-username" name="username" type="text" minlength="3" maxlength="50" required autofocus
+               class="w-full h-11 px-3.5 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+      </div>
+
+      <div>
+        <label for="edit-profile-email" class="block text-[0.8rem] font-medium text-ink-muted mb-1.5 tracking-[0.02em]">Email address</label>
+        <input id="edit-profile-email" name="email" type="email" maxlength="120" required
+               class="w-full h-11 px-3.5 border-[1.5px] border-paper-3 rounded-md bg-white font-sans text-sm text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-accent focus:shadow-[0_0_0_3px_#c17f3a18]">
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button type="button" data-modal-dismiss
+                class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink">
+          Cancel
+        </button>
+        <button type="submit" id="edit-profile-submit-btn"
+                class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper bg-ink text-paper hover:bg-[#2e2a24] disabled:cursor-not-allowed disabled:opacity-60">
+          Save changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete-account confirmation modal -->
+<div id="delete-account-modal"
+     class="modal hidden fixed inset-0 z-100 items-center justify-center p-4 bg-ink/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div data-modal-dialog
+       class="relative bg-paper rounded-lg border border-paper-3 shadow-xl w-full max-w-sm p-6 opacity-0 scale-95 translate-y-2 transition-all duration-200"
+       role="dialog" aria-modal="true" aria-labelledby="delete-account-modal-title">
+
+    <button type="button" data-modal-dismiss aria-label="Close"
+            class="absolute top-3 right-3 p-1.5 rounded-md text-ink-faint hover:text-ink-muted hover:bg-paper-2 transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M4 4l8 8M12 4l-8 8"/>
+      </svg>
+    </button>
+
+    <div class="flex items-start gap-3 pr-6">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-danger/10 text-danger">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+          <path d="M8 1.5L15 14H1L8 1.5Z"/>
+          <path d="M8 6.25v3M8 11.25h.01" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h2 id="delete-account-modal-title" class="font-serif text-lg text-ink">Delete account?</h2>
+        <p class="text-sm text-ink-muted mt-1 leading-relaxed">This will permanently delete your account and all of your posts. This action cannot be undone.</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button type="button" data-modal-dismiss
+              class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink">
+        Cancel
+      </button>
+      <button type="button" id="btn_delete_account"
+              class="h-10 px-4 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper bg-danger text-white hover:bg-[#9c2828] disabled:cursor-not-allowed disabled:opacity-60">
+        Delete account
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock main %}
+
+{% block script %}
+<script type="module">
+  import { togglePw, extractError } from '/public/js/utils.js';
+  import { getCurrentUser, getToken, clearToken } from '/public/js/auth.js';
+
+  document.querySelectorAll('[data-toggle-pw]').forEach((btn) => {
+    btn.addEventListener('click', function () {
+      togglePw(this.getAttribute('data-toggle-pw'), this);
+    });
+  });
+
+  let currentUser = null;
+
+  function renderProfile(user) {
+    document.getElementById('account-avatar-img').src = user.img_path;
+    document.getElementById('account-avatar-img').alt = user.username;
+    document.getElementById('account-username').textContent = user.username;
+    document.getElementById('account-email').textContent = user.email;
+    document.getElementById('edit-profile-username').value = user.username;
+    document.getElementById('edit-profile-email').value = user.email;
+  }
+
+  (async function init() {
+    currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      window.location.href = '/';
+      return;
+    }
+
+    renderProfile(currentUser);
+  })();
+
+  // Edit profile
+  const editProfileForm = document.getElementById('edit_profile_form');
+  const editProfileSubmitBtn = document.getElementById('edit-profile-submit-btn');
+
+  editProfileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const usernameEl = document.getElementById('edit-profile-username');
+    const emailEl = document.getElementById('edit-profile-email');
+
+    // Only send fields that actually changed.
+    const payload = {};
+    if (usernameEl.value.trim() !== currentUser.username) {
+      payload.username = usernameEl.value.trim();
+    }
+    if (emailEl.value.trim() !== currentUser.email) {
+      payload.email = emailEl.value.trim();
+    }
+
+    if (Object.keys(payload).length === 0) {
+      Modal.close('#edit-profile-modal');
+      return;
+    }
+
+    editProfileSubmitBtn.disabled = true;
+    editProfileSubmitBtn.textContent = 'Saving…';
+
+    try {
+      const response = await fetch(`/api/users/${currentUser.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        Modal.close('#edit-profile-modal');
+        document.getElementById('successMessage').textContent = 'Profile updated successfully!';
+        Modal.open('#success-modal', {
+          onDismis: () => {
+            window.location.reload();
+          },
+        });
+      } else {
+        const { message } = await extractError(response);
+        document.getElementById('errorMessage').textContent = message;
+        Modal.open('#error-modal');
+      }
+    } catch {
+      document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+      Modal.open('#error-modal');
+    } finally {
+      editProfileSubmitBtn.disabled = false;
+      editProfileSubmitBtn.textContent = 'Save changes';
+    }
+  });
+
+  // Delete account
+  const btnDeleteAccount = document.getElementById('btn_delete_account');
+
+  btnDeleteAccount.addEventListener('click', async () => {
+    btnDeleteAccount.disabled = true;
+    btnDeleteAccount.textContent = 'Deleting…';
+
+    try {
+      const response = await fetch(`/api/users/${currentUser.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (response.status === 204) {
+        clearToken();
+        window.location.href = '/';
+      } else {
+        Modal.close('#delete-account-modal');
+        const { message } = await extractError(response);
+        document.getElementById('errorMessage').textContent = message;
+        Modal.open('#error-modal');
+      }
+    } catch {
+      Modal.close('#delete-account-modal');
+      document.getElementById('errorMessage').textContent = 'Network error. Please check your connection and try again.';
+      Modal.open('#error-modal');
+    } finally {
+      btnDeleteAccount.disabled = false;
+      btnDeleteAccount.textContent = 'Delete account';
+    }
+  });
+</script>
+{% endblock script %}

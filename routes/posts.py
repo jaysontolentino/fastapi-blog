@@ -5,8 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from auth import AuthedUser
 from database import get_db
-from model import Post, User
+from model import Post
 from schema import CreatePost, PostResponse, UpdatePost
 
 router = APIRouter()
@@ -42,24 +43,15 @@ async def get_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
 )
 async def create_post(
     create_post_input: CreatePost,
+    authed_user: AuthedUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-
-    # Validate if user not exist, this is temporary validation
-    user_stmnt = select(User).where(User.id == create_post_input.user_id)
-    user = (await db.execute(user_stmnt)).scalars().first()
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User exist",
-        )
 
     new_post = Post(
         title=create_post_input.title,
         body=create_post_input.body,
         tags=create_post_input.tags,
-        user_id=create_post_input.user_id,
+        user_id=authed_user.id,
     )
 
     db.add(new_post)
@@ -73,6 +65,7 @@ async def create_post(
 @router.put("/{post_id}", response_model=PostResponse)
 async def full_update_post(
     post_id: int,
+    authed_user: AuthedUser,
     post_data: CreatePost,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
@@ -85,10 +78,10 @@ async def full_update_post(
             detail="Post not found.",
         )
 
-    if post.user_id != post_data.user_id:
+    if post.user_id != authed_user.id:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User not found.",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to update this post.",
         )
 
     post.title = post_data.title
@@ -105,6 +98,7 @@ async def full_update_post(
 @router.patch("/{post_id}", response_model=PostResponse)
 async def partial_update_post(
     post_id: int,
+    authed_user: AuthedUser,
     post_data: UpdatePost,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
@@ -115,6 +109,12 @@ async def partial_update_post(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found.",
+        )
+
+    if post.user_id != authed_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to update this post.",
         )
 
     update_post = post_data.model_dump(exclude_unset=True)
@@ -130,7 +130,11 @@ async def partial_update_post(
 
 # DELETE POST
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
+async def delete_post(
+    post_id: int,
+    authed_user: AuthedUser,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
     stmnt = select(Post).where(Post.id == post_id)
     post = (await db.execute(stmnt)).scalars().first()
 
@@ -138,6 +142,12 @@ async def delete_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found.",
+        )
+
+    if post.user_id != authed_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to delete this post.",
         )
 
     await db.delete(post)

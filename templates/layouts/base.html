@@ -70,6 +70,7 @@
     <script type="module">
 
       import {extractError} from '/public/js/utils.js'
+      import {getToken} from '/public/js/auth.js'
 
       const newPostForm = document.getElementById('new_post_form')
 
@@ -83,15 +84,13 @@
         const tags = postData.tags ? postData.tags.split(",").map(i => i.trim()) : [];
         postData.tags = tags;
 
-        //Temporary
-        postData.user_id = 1
-
         try {
           // POST to our API as JSON
           const response = await fetch("/api/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${getToken()}`,
             },
             body: JSON.stringify(postData),
           });

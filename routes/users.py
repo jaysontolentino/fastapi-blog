@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from auth import (
+    AuthedUser,
     create_access_token,
     hash_password,
     oauth2_scheme,
@@ -106,38 +107,8 @@ async def sign_access_token(
 
 
 @router.get("/me", response_model=UserPrivateResponse)
-async def get_authed_user(
-    access_token: Annotated[str, Depends(oauth2_scheme)],
-    db: Annotated[AsyncSession, Depends(get_db)],
-):
-    """Verify if access token is valid."""
-    decoded_user_id = verify_access_token(access_token)
-    if decoded_user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expire access token 1",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    """Verify id decoded user id is valid integer."""
-    try:
-        user_id = int(decoded_user_id)
-    except (TypeError, ValueError):
-        raise HTTPException(  # noqa: B904
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expire access token 2",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    query_user = await db.execute(select(User).where(User.id == user_id))
-    user = query_user.scalars().first()
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expire access token 3",
-        )
-    return user
+async def get_authed_user(authed_user: AuthedUser):
+    return authed_user
 
 
 # UPDATE USER
@@ -145,6 +116,7 @@ async def get_authed_user(
 async def update_user(
     user_id: int,
     user_data: UpdateUser,
+    authed_user: AuthedUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     # Check if user exist
@@ -155,6 +127,12 @@ async def update_user(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found.",
+        )
+
+    if user.id != authed_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to update this account.",
         )
 
     # Check if username is in payload and the username already been taken by other user.
@@ -199,7 +177,11 @@ async def update_user(
 
 # DELETE USER
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
+async def delete_user(
+    user_id: int,
+    authed_user: AuthedUser,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
     stmnt = select(User).where(User.id == user_id)
     user = (await db.execute(stmnt)).scalars().first()
 
@@ -207,6 +189,12 @@ async def delete_user(user_id: int, db: Annotated[AsyncSession, Depends(get_db)]
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User not found.",
+        )
+
+    if user.id != authed_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to delete this account.",
         )
 
     await db.delete(user)

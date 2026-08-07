@@ -42,22 +42,20 @@
     {{post.body}}
   </div>
 
-  <!-- Edit / Delete (owner or admin) -->
-  {% if True %}
-    <div class="flex gap-3 mt-10 pt-6 border-t border-paper-3">
-      <button data-modal-target="#edit-post-modal" class="text-sm px-4 py-2 rounded-md border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink transition-colors duration-150">
-        Edit post
-      </a>
-      <button type="button" data-modal-target="#delete-post-modal"
-              class="text-sm px-4 py-2 rounded-md border border-danger/30
-                     text-danger hover:bg-danger/10 transition-colors duration-150">
-        Delete
-      </button>
-    </div>
+  <!-- Edit / Delete (owner only) -->
+  <div id="post-owner-actions" class="hidden gap-3 mt-10 pt-6 border-t border-paper-3">
+    <button type="button" data-modal-target="#edit-post-modal" class="text-sm px-4 py-2 rounded-md border border-paper-3 text-ink-muted hover:bg-paper-2 hover:text-ink transition-colors duration-150">
+      Edit post
+    </button>
+    <button type="button" data-modal-target="#delete-post-modal"
+            class="text-sm px-4 py-2 rounded-md border border-danger/30
+                   text-danger hover:bg-danger/10 transition-colors duration-150">
+      Delete
+    </button>
+  </div>
 
-    {% include "partials/delete-post-confirmation-modal.html" %}
-    {% include "partials/edit-post-modal.html" %}
-  {% endif %}
+  {% include "partials/delete-post-confirmation-modal.html" %}
+  {% include "partials/edit-post-modal.html" %}
 </article>
 
 {% endblock main %}
@@ -65,8 +63,20 @@
 {% block script %}
 <script type="module">
   import {extractError} from '/public/js/utils.js';
+  import {getCurrentUser, getToken} from '/public/js/auth.js';
 
   const postId = {{ post.id }};
+  const postAuthorId = {{ post.author.id }};
+
+  // Reveal edit/delete actions only for the post's own author.
+  (async function initOwnerActions() {
+    const currentUser = await getCurrentUser();
+    if (currentUser && currentUser.id === postAuthorId) {
+      const actions = document.getElementById('post-owner-actions');
+      actions.classList.remove('hidden');
+      actions.classList.add('flex');
+    }
+  })();
 
   const postEditForm = document.getElementById('edit_post_form');
   const btnFormSubmit = document.getElementById('edit-submit-btn');
@@ -112,6 +122,7 @@
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${getToken()}`,
         },
         body: JSON.stringify(formData),
       });
@@ -129,7 +140,7 @@
         });
 
         // Clear form
-        editForm.reset();
+        postEditForm.reset();
         btnFormSubmit.disabled = true;
         btnFormSubmit.innerHTML = "Edit";
 
@@ -140,7 +151,7 @@
         document.getElementById("errorMessage").textContent = message;
         Modal.open("#error-modal");
       }
-    } catch {
+    } catch (error) {
       console.log("Error occured >> ", error)
       btnFormSubmit.disabled = false;
         btnFormSubmit.innerHTML = "Save";
@@ -166,7 +177,10 @@
   btnDelete.addEventListener('click', async (e) => {
     try {
       const response = await fetch(`/api/posts/${postId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${getToken()}`,
+        },
       });
 
       // Status 204 - No Content
